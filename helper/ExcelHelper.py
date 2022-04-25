@@ -12,6 +12,11 @@ class ExcelHelper:
         return towingDrivers_df.to_dict('records')
 
     @staticmethod
-    def retrieve_price_list_data():
-        towingDrivers_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_list')
-        return towingDrivers_df.to_dict('records')
+    def retrieve_service_list_data():
+        price_service_list_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_service_list')
+        return price_service_list_df.to_dict('records')
+
+    @staticmethod
+    def retrieve_price_mile_list_data():
+        price_mile_list_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_mile_list')
+        return price_mile_list_df.to_dict('records')

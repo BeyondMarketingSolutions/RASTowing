@@ -9,7 +9,7 @@ class GoogleMapsAPI:
     def __init__(self, key):
         self.gmaps = googlemaps.Client(key=key)
 
-    def retrieve_drivers_distance_data(self, drivers_locations, client_locations):
+    def calculate_live_distance(self, drivers_locations, client_locations):
         response = self.gmaps.distance_matrix(origins=drivers_locations, destinations=client_locations,
                                               mode="driving", departure_time=datetime.now())['rows']
         return [dict((key, (data['elements'][0])[key]['value'])

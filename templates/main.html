@@ -11,7 +11,7 @@
 </head>
 <body>
 {% block content %}
-<div class="container">
+    <div class="container">
     <div class="container mt-5">
         <form class="form-inline" id="rasAppForm" action="{{ url_for('render_results') }}" method="post">
             <div class="row d-flex justify-content-center">
@@ -29,7 +29,7 @@
                                                        id="originInput"
                                                        placeholder="Search by Zip Code or Coordinates"
                                                        class="form-control"
-                                                required>
+                                                       required>
                                                 <label for="originInput" class="floating-label">Origin</label>
                                             </div>
                                         </div>
@@ -59,13 +59,14 @@
                                             <div class="form-floating">
                                                 <select name="filterByVehicleType" id="filterByVehicleType"
                                                         class="form-select" required>
-                                                    <option value="type1">800 - 1200 KG</option>
-                                                    <option value="type2">1300 - 1700 KG</option>
-                                                    <option value="type3">1800 - 2200 KG</option>
-                                                    <option value="type4">2.300 - 3400 KG</option>
-                                                    <option value="type5">3.500 KG +</option>
+                                                    <option value="Type 1">800 - 1200 KG</option>
+                                                    <option value="Type 2">1300 - 1700 KG</option>
+                                                    <option value="Type 3">1800 - 2200 KG</option>
+                                                    <option value="Type 4">2.300 - 3400 KG</option>
+                                                    <option value="Type 5">3.500 KG +</option>
                                                 </select>
-                                                <label for="filterByVehicleType" class="floating-label">Car Weight</label>
+                                                <label for="filterByVehicleType" class="floating-label">Car
+                                                    Weight</label>
                                             </div>
                                         </div>
                                     </div>
@@ -84,28 +85,31 @@
         </form>
     </div>
     {% if drivers %}
-    <table id="rasAppDriversData" class="table table-striped">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Tel</th>
-            <th>Live ETA</th>
-            <th>Distance</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for driver in drivers %}
-        <tr>
-            <td>{{ driver['Name'] }}</td>
-            <td>{{ driver['Tel'] }}</td>
-            <td>{{ driver['duration_in_traffic'] }}</td>
-            <td>{{ driver['distance'] }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <table id="rasAppDriversData" class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Tel</th>
+                <th>Live ETA</th>
+                <th>Distance</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for driver in drivers %}
+                <tr>
+                    <td>{{ driver['Name'] }}</td>
+                    <td><a href="tel:{{ driver['Tel'] }}">{{ driver['Tel'] }}</a></td>
+                    <td>{{ driver['duration_in_traffic'] }}</td>
+                    <td>{{ driver['distance'] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <h4 style="text-align: center; font-weight: bold">Estimated Price To Charge: £ {{ estimatedPrice }}</h4>
     {% endif %}
-    {% endblock %}
+{% endblock %}
 </div>
 </body>
 </html>
