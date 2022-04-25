@@ -2,6 +2,10 @@ body {
     background-color: #00838F
 }
 
+h5 {
+    text-align: center;
+}
+
 .advanced {
     text-decoration: none;
     font-size: 15px;
@@ -24,4 +28,8 @@ body {
 .form-control:focus {
     box-shadow: none;
     border: 1px solid #00838f
+}
+
+label.floating-label {
+    font-weight: bold;
 }
