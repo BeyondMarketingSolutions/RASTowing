@@ -1,10 +1,9 @@
 import pandas
 
+from helper.PriceCategories import PriceCategories
+
 
 class ExcelHelper:
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def retrieve_drivers_data():
@@ -12,11 +11,20 @@ class ExcelHelper:
         return towingDrivers_df.to_dict('records')
 
     @staticmethod
-    def retrieve_service_list_data():
-        price_service_list_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_service_list')
-        return price_service_list_df.to_dict('records')
+    def retrieve_price_mile_by_vehicle_type(vehicle_type):
+        price_service_list_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_mile_list')
+        price_mile_data = price_service_list_df.to_dict('records')
+        final_data = [data for data in price_mile_data if data['CategoryType'] == vehicle_type]
+        if final_data is not None and 'Price' in final_data[0]:
+            return final_data[0]['Price']
+        else:
+            return 0
 
     @staticmethod
-    def retrieve_price_mile_list_data():
-        price_mile_list_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_mile_list')
-        return price_mile_list_df.to_dict('records')
+    def retrieve_from_price_list_service_data(price_category):
+        price_service_list_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_service_list')
+        categoryData = price_service_list_df.to_dict('records')
+        if price_category in PriceCategories.__members__:
+            return [data for data in categoryData if data['Categories'] == PriceCategories[price_category].value][0]
+        else:
+            return None

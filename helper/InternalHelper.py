@@ -1,8 +1,9 @@
 import configparser
-import datetime
+from datetime import datetime, timedelta, date
 
 from API.GoogleMapsAPI import GoogleMapsAPI
 from helper.ExcelHelper import ExcelHelper
+from helper.PriceCategories import PriceCategories
 
 
 class InternalHelper:
@@ -15,20 +16,19 @@ class InternalHelper:
 
     def calculate_estimated_price_based_on_service(self, client_location, preferred_client_destination,
                                                    type_of_service, vehicle_type):
-        price_service_list_data = ExcelHelper.retrieve_service_list_data()
-        price_mile_data = ExcelHelper.retrieve_price_mile_list_data()
-        call_out_price = [data for data in price_service_list_data if data['Categories'] == 'Call out'][0][vehicle_type]
-        service_price = [data for data in price_service_list_data if data['Categories'] == type_of_service][0][
-            vehicle_type]
+        call_out_price = ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.CALL_OUT.name)[vehicle_type]
+        service_price = ExcelHelper.retrieve_from_price_list_service_data(type_of_service)[vehicle_type]
 
         total_price = call_out_price + service_price
 
         if preferred_client_destination is not None:
             distance_driver_client = self.googleMapsAPI.calculate_live_distance(client_location,
                                                                                 preferred_client_destination)
-            if type_of_service == 'Breakdown Recovery':
-                mile_price = [data for data in price_mile_data if data['CategoryType'] == vehicle_type][0]['Price']
+            if type_of_service == 'BREAKDOWN_RECOVERY_SERVICE':
+                mile_price = ExcelHelper.retrieve_price_mile_by_vehicle_type(vehicle_type)
                 total_price += ((distance_driver_client[0]['distance'] / 1600) * mile_price)
+
+        total_price += self.__additional_prices_to_charge(vehicle_type)
 
         return round(total_price)
 
@@ -62,6 +62,25 @@ class InternalHelper:
     @staticmethod
     def __normalize_values(driver_data):
         for data in driver_data:
-            data['duration_in_traffic'] = str(datetime.timedelta(seconds=data['duration_in_traffic']))
+            data['duration_in_traffic'] = str(timedelta(seconds=data['duration_in_traffic']))
             data['distance'] = str(int(data['distance']) // 1600) + ' miles'
         return driver_data
+
+    @staticmethod
+    def normalize_tel_values(drivers_response):
+        for driver_data in drivers_response:
+            if '/' in driver_data['Tel']:
+                driver_data['Tel'] = driver_data['Tel'].split('/')
+            else:
+                driver_data['Tel'] = [driver_data['Tel']]
+        return drivers_response
+
+    @staticmethod
+    def __additional_prices_to_charge(vehicle_type):
+        additional_price = 0
+        timestamp = datetime.now()
+        if timestamp.hour > 18 or timestamp.hour < 6:
+            additional_price += ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.NIGHT_RATE.name)[vehicle_type]
+        if date.today().weekday() > 4:
+            additional_price += ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.WEEKEND.name)[vehicle_type]
+        return additional_price

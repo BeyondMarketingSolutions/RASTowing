@@ -3,6 +3,7 @@
     <title>RAS APP</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/searchtoolbar.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" charset="utf8"
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -11,7 +12,7 @@
 </head>
 <body>
 {% block content %}
-    <div class="container">
+<div id="RASForm" class="container">
     <div class="container mt-5">
         <form class="form-inline" id="rasAppForm" action="{{ url_for('render_results') }}" method="post">
             <div class="row d-flex justify-content-center">
@@ -47,10 +48,12 @@
                                             <div class="form-floating">
                                                 <select name="filterByService" id="filterByService"
                                                         class="form-select" required>
-                                                    <option value="Breakdown Recovery">Breakdown Recovery</option>
-                                                    <option value="Battery Services">Battery Service</option>
-                                                    <option value="Tyre Services">Tyre Service</option>
-                                                    <option value="Fuel Services">Fuel Service</option>
+                                                    <option value="BREAKDOWN_RECOVERY_SERVICE">Breakdown Recovery
+                                                    </option>
+                                                    <option value="JUMPSTART_SERVICE">Jumpstart</option>
+                                                    <option value="BATTERY_SERVICE">Battery Service</option>
+                                                    <option value="TYRE_SERVICE">Tyre Service</option>
+                                                    <option value="WRONG_FUEL_SERVICE">Fuel Service</option>
                                                 </select>
                                                 <label for="filterByService" class="floating-label">Service</label>
                                             </div>
@@ -85,31 +88,35 @@
         </form>
     </div>
     {% if drivers %}
-        <table id="rasAppDriversData" class="table table-striped">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Tel</th>
-                <th>Live ETA</th>
-                <th>Distance</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for driver in drivers %}
-                <tr>
-                    <td>{{ driver['Name'] }}</td>
-                    <td><a href="tel:{{ driver['Tel'] }}">{{ driver['Tel'] }}</a></td>
-                    <td>{{ driver['duration_in_traffic'] }}</td>
-                    <td>{{ driver['distance'] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <br>
-        <br>
-        <h4 style="text-align: center; font-weight: bold">Estimated Price To Charge: £ {{ estimatedPrice }}</h4>
+    <br>
+    <h4 id="priceEstimation">Estimated Price To Charge: £ {{ estimatedPrice }}</h4>
+    <table id="rasAppDriversData" class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Tel</th>
+            <th>Live ETA</th>
+            <th>Distance</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for driver in drivers %}
+        <tr>
+            <td>{{ driver['Name'] }}</td>
+            <td>
+                {% for telNr in driver['Tel'] %}
+                <a href="tel:{{ driver['Tel'] }}">{{ telNr }}</a>
+                {% endfor %}
+            </td>
+            <td>{{ driver['duration_in_traffic'] }}</td>
+            <td>{{ driver['distance'] }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
     {% endif %}
-{% endblock %}
+    {% endblock %}
 </div>
 </body>
 </html>
