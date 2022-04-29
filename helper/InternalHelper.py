@@ -34,7 +34,9 @@ class InternalHelper:
 
     def retrieve_nearest_drivers(self, drivers_locations, client_location, drivers_basic_data):
         drivers_final_data = drivers_basic_data
-        drivers_distance_data = self.googleMapsAPI.calculate_live_distance(drivers_locations, client_location)
+        drivers_distance_data = []
+        for paginatedLocations in [drivers_locations[i:i + 25] for i in range(0, len(drivers_locations), 25)]:
+            drivers_distance_data.extend(self.googleMapsAPI.calculate_live_distance(paginatedLocations, client_location))
         [drivers_final_data[index].update(additional_data) for index, additional_data in
          enumerate(drivers_distance_data)]
         drivers_final_data = self.__normalize_values(drivers_final_data)
