@@ -6,4 +6,4 @@ class Services(Enum):
     JUMPSTART_SERVICE = 'Jumpstart'
     BATTERY_SERVICE = 'Battery Services'
     TYRE_SERVICE = 'Tyre Services'
-    WRONG_FUEL_SERVICE = 'Tyre Services'
+    WRONG_FUEL_SERVICE = 'Wrong Fuel'
