@@ -1,5 +1,10 @@
-h4#priceEstimation{
+h4#priceEstimation {
     text-align: center;
     font-weight: bold;
+}
+
+h4#priceEstimation span {
+    background-color: #0d6efd;
+    color: white;
 }
 
