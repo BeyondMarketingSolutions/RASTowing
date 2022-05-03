@@ -18,6 +18,9 @@ class InternalHelper:
                                                    type_of_service, vehicle_type):
         call_out_price = ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.CALL_OUT.name)[vehicle_type]
         service_price = ExcelHelper.retrieve_from_price_list_service_data(type_of_service)[vehicle_type]
+        price_per_mile = None
+        if vehicle_type is not None and preferred_client_destination is None:
+            price_per_mile = ExcelHelper.retrieve_price_mile_by_vehicle_type(vehicle_type)
 
         total_price = call_out_price + service_price
 
@@ -30,7 +33,7 @@ class InternalHelper:
 
         total_price += self.__additional_prices_to_charge(vehicle_type)
 
-        return round(total_price)
+        return round(total_price), price_per_mile
 
     def retrieve_nearest_drivers(self, drivers_locations, client_location, drivers_basic_data):
         drivers_final_data = drivers_basic_data

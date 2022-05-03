@@ -24,12 +24,11 @@ def render_results():
     else:
         driversLocations = [data['Address'] for data in drivers_basic_data]
         driversResponse = helper.retrieve_nearest_drivers(driversLocations, client_location, drivers_basic_data)
-        estimatedPriceResponse = helper.calculate_estimated_price_based_on_service(client_location,
+        estimatedPriceResponse, price_per_mile = helper.calculate_estimated_price_based_on_service(client_location,
                                                                                    preferred_client_destination,
                                                                                    service_filter, vehicle_type)
         return render_template('main.html', drivers=helper.normalize_tel_values(driversResponse),
-                               estimatedPrice=estimatedPriceResponse,
-                               messages=None)
+                               estimatedPrice=estimatedPriceResponse, price_per_mile=price_per_mile)
 
 
 if __name__ == '__main__':
