@@ -21,7 +21,7 @@
 <div class="container">
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
-        <button type="button" class="close" style="float: right">&times;</button>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"style="float: right">&times;</button>
         Please send this <a href='{{ message }}'>Payment Link</a> to customer!
     </div>
     {% endfor %}
