@@ -1,6 +1,6 @@
 import pandas
 
-from helper.PriceCategories import PriceCategories
+from static.PriceCategories import PriceCategories
 
 
 class ExcelHelper:

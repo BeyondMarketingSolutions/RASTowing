@@ -1,0 +1,74 @@
+{% block content %}
+{% if estimatedPrice %}
+<div id="CustomerForm" class="container">
+    <div class="container mt-5">
+        <form class="form-inline" id="chargeCustomerForm" action="{{ url_for('send_customer_invoice') }}" method="post">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-10">
+                    <div class="card p-3 py-4">
+                        <h4 id="priceEstimation">
+                            {% if price_per_mile %}
+                            <span>Estimated Total Price: £ {{ estimatedPrice }} + £ {{price_per_mile}} / mile | Advanced Payment: £ {{ advanced_payment_price }}</span>
+                            {% else %}
+                            <span>Estimated Total Price: £ {{ estimatedPrice }} | Advanced Payment: £ {{ advanced_payment_price }}</span>
+                            {% endif %}
+                        </h4>
+                        <div class="mt-3">
+                            <div>
+                                <div class="card card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                <input type="text"
+                                                       name="nameInput"
+                                                       id="nameInput"
+                                                       class="form-control"
+                                                       required>
+                                                <label for="nameInput" class="floating-label">Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                <input type="text"
+                                                       name="emailInput"
+                                                       id="emailInput"
+                                                       class="form-control"
+                                                       required>
+                                                <label for="emailInput" class="floating-label">Email</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                <input type="text"
+                                                       name="phoneInput"
+                                                       id="phoneInput"
+                                                       class="form-control"
+                                                       required>
+                                                <label for="phoneInput" class="floating-label">Phone</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <button class="btn btn-cancel btn-block" type="submit" name="Cancel"
+                                                    formnovalidate>Cancel
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-secondary btn-block" type="submit"
+                                                    name="send_invoice">Send Invoice
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

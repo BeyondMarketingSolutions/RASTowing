@@ -18,7 +18,17 @@
 </head>
 <body>
 {% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" style="float: right">&times;</button>
+        Please send this <a href='{{ message }}'>Payment Link</a> to customer!
+    </div>
+    {% endfor %}
+    {% block page_content %}{% endblock %}
+</div>
 <div id="RASForm" class="container">
+    {% if not estimatedPrice %}
     <div class="container mt-5">
         <form class="form-inline" id="rasAppForm" action="{{ url_for('render_results') }}" method="post">
             <div class="row d-flex justify-content-center">
@@ -93,16 +103,9 @@
             </div>
         </form>
     </div>
+    {% endif %}
+    {% include 'ChargeCustomer.html' %}
     {% if drivers %}
-    <br>
-    <h4 id="priceEstimation">
-        {% if price_per_mile %}
-        <span>Estimated Price To Charge: £ {{ estimatedPrice }} + £ {{price_per_mile}} / mile</span>
-        {% else %}
-        <span>Estimated Price To Charge: £ {{ estimatedPrice }}</span>
-        {% endif %}
-    </h4>
-    <br>
     <div class="table-responsive">
         <table id="rasAppDriversData" class="table table-striped">
             <thead>
@@ -137,8 +140,8 @@
     </div>
     <br>
     {% endif %}
-    {% endblock %}
 </div>
+{% endblock %}
 <script>
     $(document).ready(function () {
         $('#rasAppDriversData').DataTable({
@@ -146,7 +149,7 @@
             "ordering": false,
             "searching": false,
             "info": false,
-            "bLengthChange" : false
+            "bLengthChange": false
         });
     });
 </script>

@@ -3,8 +3,7 @@ h4#priceEstimation {
     font-weight: bold;
 }
 
-h4#priceEstimation span {
-    background-color: #00838f;
-    color: white;
+.alert, .alert-warning{
+    text-align: center;
 }
 

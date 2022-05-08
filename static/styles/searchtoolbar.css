@@ -21,6 +21,13 @@ h5 {
     box-shadow: none
 }
 
+.btn-cancel {
+    color: #fff;
+    background-color: #ff5455 !important;
+    border-color: #ff5455 !important;
+    box-shadow: none
+}
+
 .advanced {
     color: #00838f !important
 }
