@@ -38,18 +38,25 @@ def render_results():
         session['drivers'] = helper.normalize_tel_values(driversResponse)
         session['advanced_payment_price'] = advanced_payment
         session['type_of_service'] = service_value
-        return render_template('main.html', estimatedPrice=estimatedPriceResponse, price_per_mile=price_per_mile,
+        return render_template('ChargeCustomer.html', drivers=session['drivers'],
+                               estimatedPrice=estimatedPriceResponse, price_per_mile=price_per_mile,
                                advanced_payment_price=advanced_payment)
 
 
-@app.route('/book/drivers', methods=['POST'])
+@app.route('/', methods=['POST'])
 def send_customer_invoice():
     if 'Cancel' in request.form:
-        return render_template('main.html', drivers=None)
+        return return_search_page()
     customer = InternalHelper.customer_input_data_elaborate(request)
     payment_link = helper.send_customer_invoice(session['advanced_payment_price'], customer, session['type_of_service'])
     flash(payment_link, "info")
-    return render_template('main.html', drivers=flask.session['drivers'])
+    return render_template('ChargeCustomer.html', drivers=flask.session['drivers'], estimatedPrice=None, payment_link=payment_link)
+
+
+@app.route('/', methods=['POST'])
+def return_search_page():
+    session.clear()
+    return render_template('main.html', drivers=None)
 
 
 if __name__ == '__main__':

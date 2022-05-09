@@ -1,34 +1,7 @@
-<html>
-<head>
-    <title>RAS APP</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/searchtoolbar.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css"/>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-</head>
-<body>
 {% block content %}
-<div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"style="float: right">&times;</button>
-        Please send this <a href='{{ message }}'>Payment Link</a> to customer!
-    </div>
-    {% endfor %}
-    {% block page_content %}{% endblock %}
-</div>
+{% include 'Header.html' %}
+{% if not estimatedPrice %}
 <div id="RASForm" class="container">
-    {% if not estimatedPrice %}
     <div class="container mt-5">
         <form class="form-inline" id="rasAppForm" action="{{ url_for('render_results') }}" method="post">
             <div class="row d-flex justify-content-center">
@@ -103,55 +76,7 @@
             </div>
         </form>
     </div>
-    {% endif %}
-    {% include 'ChargeCustomer.html' %}
-    {% if drivers %}
-    <div class="table-responsive">
-        <table id="rasAppDriversData" class="table table-striped">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Tel</th>
-                <th>Live ETA</th>
-                <th>Distance</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for driver in drivers %}
-            <tr>
-                <td>{{ driver['Name'] }}</td>
-                <td>
-                    {% for telNr in driver['Tel'] %}
-                    <a class="btn btn-success" href="tel:{{ telNr }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" -->
-                            class="bi bi-telephone" viewBox="0 0 16 16">
-                            <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"></path>
-                        </svg>
-                        {{ telNr }}</a>
-                    {% endfor %}
-                </td>
-                <td>{{ driver['duration_in_traffic'] }}</td>
-                <td>{{ driver['distance'] }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <br>
-    </div>
-    <br>
-    {% endif %}
 </div>
+{% endif %}
+{% include 'Footer.html' %}
 {% endblock %}
-<script>
-    $(document).ready(function () {
-        $('#rasAppDriversData').DataTable({
-            "pagingType": "simple_numbers",
-            "ordering": false,
-            "searching": false,
-            "info": false,
-            "bLengthChange": false
-        });
-    });
-</script>
-</body>
-</html>
