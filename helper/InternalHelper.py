@@ -91,9 +91,15 @@ class InternalHelper:
 
     @staticmethod
     def __normalize_values(driver_data):
-        for data in driver_data:
-            data['duration_in_traffic'] = str(timedelta(seconds=data['duration_in_traffic']))
-            data['distance'] = str(int(data['distance']) // 1600) + ' miles'
+        indexes_to_remove = []
+        for index, data  in enumerate(driver_data):
+            if 'duration_in_traffic' and 'distance' in data:
+                data['duration_in_traffic'] = str(timedelta(seconds=data['duration_in_traffic']))
+                data['distance'] = str(int(data['distance']) // 1600) + ' miles'
+            else:
+                indexes_to_remove.append(index)
+        for index in indexes_to_remove:
+            del driver_data[index]
         return driver_data
 
     @staticmethod
