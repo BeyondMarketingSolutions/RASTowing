@@ -12,3 +12,7 @@ class PriceCategories(Enum):
     NIGHT_RATE = 'Night Rate'
     CARAVAN_TRAILER = 'Caravan/ Trailer'
     ADDITIONAL_TOOLS = 'Whells Dolly/ Stick'
+
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_

@@ -14,7 +14,7 @@
         {% if estimatedPrice%}
         <form class="form-inline" id="chargeCustomerForm" action="{{ url_for('send_customer_invoice') }}" method="post">
             <div class="row d-flex justify-content-center">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <div class="card p-3 py-4">
                         <h4 id="priceEstimation">
                             {% if price_per_mile %}
@@ -76,6 +76,27 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 py-4 descriptionNote">
+                        <h4 id="jobDescription">
+                            Job Description
+                        </h4>
+                        <br>
+                        <span><b>Origin</b>: {{ job_data.origin }}</span>
+                        <br>
+                        {% if job_data.destination %}
+                        <span><b>Destination</b>: {{ job_data.destination }}</span>
+                        {% else %}
+                        <span><b>Destination</b>: Unknown/TBD</span>
+                        {% endif %}
+                        <br>
+                        <span><b>Service</b>: {{ job_data.service }}</span>
+                        <br>
+                        <span><b>Price</b>: £ {{ job_data.price }}</span>
+                        <br>
+                        <span><b>Notes</b>: {{ job_data.description }}</span>
                     </div>
                 </div>
             </div>

@@ -24,7 +24,7 @@ class ExcelHelper:
     def retrieve_from_price_list_service_data(price_category):
         price_service_list_df = pandas.read_excel('./static/DriversDB.xlsx', sheet_name='price_service_list')
         categoryData = price_service_list_df.to_dict('records')
-        if price_category in PriceCategories.__members__:
-            return [data for data in categoryData if data['Categories'] == PriceCategories[price_category].value][0]
+        if PriceCategories.has_value(price_category):
+            return [data for data in categoryData if data['Categories'] == price_category][0]
         else:
             return None

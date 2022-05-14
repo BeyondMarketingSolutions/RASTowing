@@ -2,11 +2,14 @@ import configparser
 import math
 from datetime import datetime, timedelta, date
 
+
 from API.GoogleMapsAPI import GoogleMapsAPI
 from helper.ExcelHelper import ExcelHelper
 from helper.PaymentHelper import PaymentHelper
 from static.Customer import Customer
 from static.PriceCategories import PriceCategories
+from static.JobData import JobData
+from static.Services import Services
 
 
 class InternalHelper:
@@ -19,28 +22,25 @@ class InternalHelper:
         self.googleMapsAPI = GoogleMapsAPI(self.api_key)
         self.paymentHelper = PaymentHelper(InternalHelper.__get_stripe_api_key())
 
-    def calculate_estimated_price_based_on_service(self, client_location, preferred_client_destination,
-                                                   type_of_service, vehicle_type):
-        call_out_price = ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.CALL_OUT.name)[vehicle_type]
-        service_price = ExcelHelper.retrieve_from_price_list_service_data(type_of_service)[vehicle_type]
+    def calculate_estimated_price_based_on_service(self, job_data):
+        call_out_price = ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.CALL_OUT.value)[
+            job_data.weight]
+        service_price = ExcelHelper.retrieve_from_price_list_service_data(job_data.service)[job_data.weight]
         price_per_mile = None
-        if vehicle_type is not None \
-                and preferred_client_destination is None \
-                and type_of_service == 'BREAKDOWN_RECOVERY_SERVICE':
-            price_per_mile = ExcelHelper.retrieve_price_mile_by_vehicle_type(vehicle_type)
+        if job_data.weight is not None and job_data.destination is None and job_data.service == Services.BREAKDOWN_RECOVERY_SERVICE:
+            price_per_mile = ExcelHelper.retrieve_price_mile_by_vehicle_type(job_data.weight)
 
         total_price = call_out_price + service_price
 
-        if preferred_client_destination is not None:
-            distance_driver_client = self.googleMapsAPI.calculate_live_distance(client_location,
-                                                                                preferred_client_destination)
-            if type_of_service == 'BREAKDOWN_RECOVERY_SERVICE':
-                mile_price = ExcelHelper.retrieve_price_mile_by_vehicle_type(vehicle_type)
+        if job_data.destination is not None:
+            distance_driver_client = self.googleMapsAPI.calculate_live_distance(job_data.origin, job_data.destination)
+            if job_data.service == Services.BREAKDOWN_RECOVERY_SERVICE:
+                mile_price = ExcelHelper.retrieve_price_mile_by_vehicle_type(job_data.weight)
                 total_price += ((distance_driver_client[0]['distance'] / 1600) * mile_price)
 
-        total_price += self.__additional_prices_to_charge(vehicle_type)
+        total_price += self.__additional_prices_to_charge(job_data.weight)
 
-        return round(total_price), price_per_mile, math.ceil(total_price * 0.3)
+        return math.ceil(total_price), price_per_mile, math.ceil(total_price * 0.3)
 
     def retrieve_nearest_drivers(self, drivers_locations, client_location, drivers_basic_data):
         drivers_final_data = drivers_basic_data
@@ -51,23 +51,24 @@ class InternalHelper:
          enumerate(drivers_distance_data)]
         drivers_final_data = self.__normalize_values(drivers_final_data)
         drivers_final_data.sort(key=lambda d: d['duration_in_traffic'])
+        self.normalize_tel_values(drivers_final_data)
         return drivers_final_data
 
     def send_customer_invoice(self, price, customer, type_of_service):
         return self.paymentHelper.generate_invoice_link(price, customer, type_of_service)
 
-
     @staticmethod
-    def input_data_elaborate(request):
+    def job_data_elaborate(request):
         preferred_client_destination = None
-
-        client_location = request.form['originInput']
-        service_filter = request.form['filterByService']
-        vehicle_type = request.form['filterByVehicleType']
+        origin = request.form['originInput']
+        service = Services[request.form['filterByService']].value
+        weight = request.form['filterByVehicleType']
+        description = request.form['descriptionInput']
         if request.form['destinationInput']:
             preferred_client_destination = request.form['destinationInput']
 
-        return client_location, preferred_client_destination, service_filter, vehicle_type
+        job_data = JobData(origin, preferred_client_destination, service, weight, description)
+        return job_data
 
     @staticmethod
     def customer_input_data_elaborate(request):
@@ -92,7 +93,7 @@ class InternalHelper:
     @staticmethod
     def __normalize_values(driver_data):
         indexes_to_remove = []
-        for index, data  in enumerate(driver_data):
+        for index, data in enumerate(driver_data):
             if 'duration_in_traffic' and 'distance' in data:
                 data['duration_in_traffic'] = str(timedelta(seconds=data['duration_in_traffic']))
                 data['distance'] = str(int(data['distance']) // 1600) + ' miles'
@@ -112,11 +113,22 @@ class InternalHelper:
         return drivers_response
 
     @staticmethod
+    def store_job_data_to_session(drivers_response):
+        for driver_data in drivers_response:
+            if '/' in driver_data['Tel']:
+                driver_data['Tel'] = driver_data['Tel'].split('/')
+            else:
+                driver_data['Tel'] = [driver_data['Tel']]
+        return drivers_response
+
+    @staticmethod
     def __additional_prices_to_charge(vehicle_type):
         additional_price = 0
         timestamp = datetime.now()
         if timestamp.hour > 18 or timestamp.hour < 6:
-            additional_price += ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.NIGHT_RATE.name)[vehicle_type]
+            additional_price += ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.NIGHT_RATE.value)[
+                vehicle_type]
         if date.today().weekday() > 4:
-            additional_price += ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.WEEKEND.name)[vehicle_type]
+            additional_price += ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.WEEKEND.value)[
+                vehicle_type]
         return additional_price
