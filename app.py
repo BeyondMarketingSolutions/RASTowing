@@ -46,7 +46,7 @@ def send_customer_invoice():
         return return_search_page()
     customer = InternalHelper.customer_input_data_elaborate(request)
     payment_link = helper.send_customer_invoice(session[SessionDataEnum.ESTIMATED_ADVANCE_PAYMENT], customer,
-                                                SessionDataEnum.SERVICE)
+                                                session[SessionDataEnum.SERVICE])
     flash(payment_link, "info")
     return render_template('ChargeCustomer.html', drivers=session[SessionDataEnum.DRIVERS], estimatedPrice=None,
                            payment_link=payment_link)
