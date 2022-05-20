@@ -3,7 +3,11 @@ class JobData:
     destination = None
     service = ""
     weight = "",
-    price = "",
+    total_price = 0
+    driver_price = 0,
+    advanced_payment = 0,
+    price_per_mile = None
+    mileage = "",
     description = ""
 
     def __init__(self, origin, destination, service, weight, description):
@@ -27,3 +31,12 @@ class JobData:
 
     def set_description(self, description):
         self.description = description
+
+    def set_mileage(self, mileage):
+        self.mileage = mileage
+
+    def set_price(self, price):
+        self.price = price
+
+    def set_advanced_price(self, advanced_payment):
+        self.advanced_payment =  advanced_payment

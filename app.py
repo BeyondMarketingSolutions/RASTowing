@@ -4,6 +4,7 @@ from helper.InternalHelper import InternalHelper
 from helper.ExcelHelper import ExcelHelper
 from flask_session import Session
 from static.SessionDataEnum import SessionDataEnum
+from collections import namedtuple
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -29,15 +30,10 @@ def render_results():
     else:
         driversLocations = [data['Address'] for data in drivers_basic_data]
         drivers = helper.retrieve_nearest_drivers(driversLocations, job_data.origin, drivers_basic_data)
-        total_estimated_price, price_per_mile, advanced_payment = helper.calculate_estimated_price_based_on_service(job_data)
+        helper.calculate_estimated_price_based_on_service(job_data)
         session[SessionDataEnum.DRIVERS] = drivers
-        session[SessionDataEnum.ESTIMATED_ADVANCE_PAYMENT] = advanced_payment
-        session[SessionDataEnum.SERVICE] = job_data.service
-        session[SessionDataEnum.NOTES] = job_data.description
-        job_data.price = total_estimated_price - advanced_payment
-        return render_template('ChargeCustomer.html', job_data=job_data, drivers=drivers,
-                               estimatedPrice=total_estimated_price, price_per_mile=price_per_mile,
-                               advanced_payment_price=advanced_payment)
+        session[SessionDataEnum.JOB_DATA] = job_data.__dict__
+        return render_template('ChargeCustomer.html', job_data=job_data, drivers=drivers)
 
 
 @app.route('/', methods=['POST'])
@@ -45,10 +41,12 @@ def send_customer_invoice():
     if 'Cancel' in request.form:
         return return_search_page()
     customer = InternalHelper.customer_input_data_elaborate(request)
-    payment_link = helper.send_customer_invoice(session[SessionDataEnum.ESTIMATED_ADVANCE_PAYMENT], customer,
-                                                session[SessionDataEnum.SERVICE])
+    payment_link = helper.send_customer_invoice(session[SessionDataEnum.JOB_DATA]['advanced_payment'], customer,
+                                                session[SessionDataEnum.JOB_DATA]['service'])
+    session[SessionDataEnum.JOB_DATA]['total_price'] = None
+    job_data = namedtuple("JobData", session[SessionDataEnum.JOB_DATA].keys())(*session[SessionDataEnum.JOB_DATA].values())
     flash(payment_link, "info")
-    return render_template('ChargeCustomer.html', drivers=session[SessionDataEnum.DRIVERS], estimatedPrice=None,
+    return render_template('ChargeCustomer.html', drivers=session[SessionDataEnum.DRIVERS], job_data=job_data,
                            payment_link=payment_link)
 
 

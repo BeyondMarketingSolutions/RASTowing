@@ -26,21 +26,23 @@ class InternalHelper:
         call_out_price = ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.CALL_OUT.value)[
             job_data.weight]
         service_price = ExcelHelper.retrieve_from_price_list_service_data(job_data.service)[job_data.weight]
-        price_per_mile = None
         if job_data.weight is not None and job_data.destination is None and job_data.service == Services.BREAKDOWN_RECOVERY_SERVICE.value:
-            price_per_mile = ExcelHelper.retrieve_price_mile_by_vehicle_type(job_data.weight)
+            job_data.price_per_mile = ExcelHelper.retrieve_price_mile_by_vehicle_type(job_data.weight)
 
         total_price = call_out_price + service_price
 
         if job_data.destination is not None:
             distance_driver_client = self.googleMapsAPI.calculate_live_distance(job_data.origin, job_data.destination)
+            job_data.mileage = str(math.ceil(distance_driver_client[0]['distance'] / 1600))
             if job_data.service == Services.BREAKDOWN_RECOVERY_SERVICE.value:
                 mile_price = ExcelHelper.retrieve_price_mile_by_vehicle_type(job_data.weight)
                 total_price += ((distance_driver_client[0]['distance'] / 1600) * mile_price)
 
-        total_price += self.__additional_prices_to_charge(job_data.weight)
+        total_price += (self.__additional_prices_to_charge(job_data.weight))
+        job_data.total_price = math.ceil(total_price)
+        job_data.advanced_payment = math.ceil(total_price * 0.3)
+        job_data.driver_price = job_data.total_price - job_data.advanced_payment
 
-        return math.ceil(total_price), price_per_mile, math.ceil(total_price * 0.3)
 
     def retrieve_nearest_drivers(self, drivers_locations, client_location, drivers_basic_data):
         drivers_final_data = drivers_basic_data

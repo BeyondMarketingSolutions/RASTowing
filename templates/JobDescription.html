@@ -1,0 +1,25 @@
+{% block content %}
+<div class="col-md-4">
+    <div class="card p-3 py-4 descriptionNote">
+        <h4 id="jobDescription">
+            Job Description
+        </h4>
+        <br>
+        <span><b>Origin</b>: {{ job_data.origin|upper }}</span>
+        <br>
+        {% if job_data.destination %}
+        <span><b>Destination</b>: {{ job_data.destination|upper }}</span>
+        {% else %}
+        <span><b>Destination</b>: Unknown/TBD</span>
+        {% endif %}
+        <br>
+        <span><b>Distance</b>: {{ job_data.mileage}} Miles</span>
+        <br>
+        <span><b>Service</b>: {{ job_data.service }}</span>
+        <br>
+        <span><b>Price</b>: £ {{ job_data.driver_price }}</span>
+        <br>
+        <span><b>Notes</b>: {{ job_data.description }}</span>
+    </div>
+</div>
+{% endblock %}
