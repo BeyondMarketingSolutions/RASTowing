@@ -26,7 +26,9 @@ class InternalHelper:
         call_out_price = ExcelHelper.retrieve_from_price_list_service_data(PriceCategories.CALL_OUT.value)[
             job_data.weight]
         service_price = ExcelHelper.retrieve_from_price_list_service_data(job_data.service)[job_data.weight]
-        if job_data.weight is not None and job_data.destination is None and job_data.service == Services.BREAKDOWN_RECOVERY_SERVICE.value:
+        if job_data.weight is not None \
+                and job_data.destination is None \
+                and job_data.service in [Services.BREAKDOWN_RECOVERY_SERVICE.value, Services.TOTAL_LIFT_RECOVERY.value]:
             job_data.price_per_mile = ExcelHelper.retrieve_price_mile_by_vehicle_type(job_data.weight)
 
         total_price = call_out_price + service_price
@@ -34,7 +36,7 @@ class InternalHelper:
         if job_data.destination is not None:
             distance_driver_client = self.googleMapsAPI.calculate_live_distance(job_data.origin, job_data.destination)
             job_data.mileage = str(math.ceil(distance_driver_client[0]['distance'] / 1600))
-            if job_data.service == Services.BREAKDOWN_RECOVERY_SERVICE.value:
+            if job_data.service in [Services.BREAKDOWN_RECOVERY_SERVICE.value, Services.TOTAL_LIFT_RECOVERY.value]:
                 mile_price = ExcelHelper.retrieve_price_mile_by_vehicle_type(job_data.weight)
                 total_price += ((distance_driver_client[0]['distance'] / 1600) * mile_price)
 
