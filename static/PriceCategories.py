@@ -8,7 +8,7 @@ class PriceCategories(Enum):
     JUMPSTART_SERVICE = 'Jumpstart'
     BATTERY_SERVICE = 'Battery Services'
     TYRE_SERVICE = 'Tyre Services'
-    WRONG_FUEL_SERVICE = 'Tyre Services'
+    WRONG_FUEL_SERVICE = 'Wrong Fuel'
     WEEKEND = 'Weekend'
     NIGHT_RATE = 'Night Rate'
     CARAVAN_TRAILER = 'Caravan/ Trailer'

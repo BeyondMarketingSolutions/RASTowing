@@ -1,7 +1,9 @@
 import flask
-from flask import Flask, render_template, request, session, flash
+from flask import Flask, render_template, request, session, flash, Response
+import json
 from helper.InternalHelper import InternalHelper
 from helper.ExcelHelper import ExcelHelper
+from helper.FileHelper import FileHelper
 from flask_session import Session
 from static.SessionDataEnum import SessionDataEnum
 from collections import namedtuple
@@ -17,6 +19,12 @@ helper = InternalHelper()
 @app.route('/')
 def towing_dashboard():
     return render_template('main.html')
+
+
+@app.route('/_autocomplete', methods=['GET'])
+def autocomplete():
+    post_codes = FileHelper.retrieve_postcodes_data()
+    return Response(json.dumps(post_codes), mimetype='application/json')
 
 
 @app.route('/service/payment', methods=['POST'])
@@ -57,4 +65,4 @@ def return_search_page():
 
 
 if __name__ == '__main__':
-    app.run('localhost', 5000, debug=True)
+    app.run('localhost', 8888, debug=True)
