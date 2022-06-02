@@ -1,0 +1,7 @@
+1. Where are you located right now? (demand for postal code if possible)
+2. What is your preferred destination? (demand for postal code if possible)
+3. Can you please let me know the car's year, make and the model?
+4. Do you have car insurance?
+5. What is wrong with the car? (take note of his answer)
+6. Is there any wheel detached or any part of the car damaged?
+7. Is there any oil/liquid leak?

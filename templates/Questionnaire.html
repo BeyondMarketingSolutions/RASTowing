@@ -1,0 +1,12 @@
+{% block content %}
+    <div class="descriptionNote" id="questionnaireSection">
+        <h4>
+            Questions for {{service}}:
+        </h4>
+        <br>
+        {% for question in questions %}
+        <span>{{question}}</span>
+        <br>
+        {% endfor %}
+</div>
+{% endblock %}

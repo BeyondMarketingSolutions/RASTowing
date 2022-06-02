@@ -6,11 +6,15 @@ from helper.ExcelHelper import ExcelHelper
 from helper.FileHelper import FileHelper
 from flask_session import Session
 from static.SessionDataEnum import SessionDataEnum
+from static.Services import Services
 from collections import namedtuple
 
 app = Flask(__name__)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
+app.config.update(
+    SESSION_PERMANENT=True,
+    SESSION_TYPE="filesystem",
+    TEMPLATES_AUTO_RELOAD=True
+)
 Session(app)
 
 helper = InternalHelper()
@@ -18,7 +22,13 @@ helper = InternalHelper()
 
 @app.route('/')
 def towing_dashboard():
-    return render_template('main.html')
+    service = request.args.get('service');
+    if service is not None:
+        service_selected = Services[service].value
+    else:
+        service_selected = Services.BREAKDOWN_RECOVERY_SERVICE.value
+    questions = InternalHelper.retrieve_customer_questions(service_selected)
+    return render_template('main.html', service=service_selected, questions=questions)
 
 
 @app.route('/_autocomplete', methods=['GET'])

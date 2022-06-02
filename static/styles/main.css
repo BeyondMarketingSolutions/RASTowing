@@ -7,13 +7,14 @@ h4#priceEstimation {
     text-align: center;
 }
 
-h4#jobDescription{
+h4#jobDescription, div#questionnaireSection{
     text-align: center;
 }
 
 div.descriptionNote {
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24);
     background-color: #e6e6e6;
+  text-align: center;
 }
 
 .ui-autocomplete {

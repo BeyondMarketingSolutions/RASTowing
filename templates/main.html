@@ -26,6 +26,12 @@
         <form class="form-inline" id="rasAppForm" action="{{ url_for('render_results') }}" method="post">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-10">
+                    {% include 'Questionnaire.html' %}
+                </div>
+            </div>
+            <br>
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-10">
                     <div class="card p-3 py-4">
                         <h5>Royal Auto Assistance Drivers Availability</h5>
                         <div class="mt-3">
@@ -58,7 +64,8 @@
                                             <div class="form-floating">
                                                 <select name="filterByService" id="filterByService"
                                                         class="form-select" required>
-                                                    <option value="BREAKDOWN_RECOVERY_SERVICE">Breakdown Recovery
+                                                    <option value="BREAKDOWN_RECOVERY_SERVICE" selected="selected">
+                                                        Breakdown Recovery
                                                     </option>
                                                     <option value="TOTAL_LIFT_RECOVERY">Total Lift Recovery
                                                     </option>
@@ -68,11 +75,24 @@
                                                     <option value="WRONG_FUEL_SERVICE">Fuel Service</option>
                                                 </select>
                                                 <label for="filterByService" class="floating-label">Service</label>
+                                                <script>
+                                                    $('#filterByService').on('change', function () {
+                                                        $.ajax({
+                                                            data: {'service': $('#filterByService').val()},
+                                                            url: '{{ url_for("towing_dashboard") }}',
+                                                            success: function (response) {
+                                                                $('#questionnaireSection').html($($.parseHTML(response)).find('#questionnaireSection'))
+                                                                console.log($($.parseHTML(response)).find('#questionnaireSection'))
+                                                            }
+                                                        })
+                                                    });
+                                                </script>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-floating">
                                                 <select name="filterByVehicleType" id="filterByVehicleType"
+                                                        onchange="serviceOnChange(this)"
                                                         class="form-select" required>
                                                     <option value="Type 1">800 - 1200 KG</option>
                                                     <option value="Type 2">1300 - 1700 KG</option>

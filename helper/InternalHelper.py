@@ -75,6 +75,13 @@ class InternalHelper:
         return job_data
 
     @staticmethod
+    def retrieve_customer_questions(service):
+        if service is None:
+            service = "Breakdown Recovery"
+        with open(f'./static/questions/{service}.txt', 'r', encoding='utf-8') as file_read:
+            return [str(data) for data in file_read.readlines()]
+
+    @staticmethod
     def customer_input_data_elaborate(request):
         customer_name = request.form['nameInput']
         customer_email = request.form['emailInput']
