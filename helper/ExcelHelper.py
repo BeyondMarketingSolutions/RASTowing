@@ -16,11 +16,12 @@ class ExcelHelper:
         post_code_initials = ExcelHelper.remove_digits_from_string(postal_code.upper().split()[0])
         if LondonPostCodes.has_value(post_code_initials):
             sheet_name = 'LONDON'
-        sheet_name_list = [sheet for sheet in xls_file.sheet_names if post_code_initials in sheet.upper().strip()]
-        if  len(sheet_name_list) > 0:
-            sheet_name = sheet_name_list[0]
         else:
-            return sheet_name
+            sheet_name_list = [sheet for sheet in xls_file.sheet_names if post_code_initials in sheet.upper().strip()]
+            if  len(sheet_name_list) > 0:
+                sheet_name = sheet_name_list[0]
+            else:
+                return sheet_name
         towingDrivers_df = pandas.read_excel('./static/RAS_DB.xlsx', sheet_name=sheet_name)
         return towingDrivers_df.to_dict('records')
 
