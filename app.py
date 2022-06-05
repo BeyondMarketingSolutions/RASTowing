@@ -41,7 +41,7 @@ def autocomplete():
 def render_results():
     session.pop('_flashes', None)
     job_data = InternalHelper.job_data_elaborate(request)
-    drivers_basic_data = ExcelHelper.retrieve_drivers_data()
+    drivers_basic_data = ExcelHelper.retrieve_drivers_data(job_data.origin)
     drivers_basic_data = [driver_data for driver_data in drivers_basic_data if driver_data[job_data.service] == 'Yes']
     if len(drivers_basic_data) == 0:
         return render_template('main.html', drivers=None)
@@ -71,7 +71,9 @@ def send_customer_invoice():
 @app.route('/', methods=['POST'])
 def return_search_page():
     session.clear()
-    return render_template('main.html', drivers=None)
+    service_selected = Services.BREAKDOWN_RECOVERY_SERVICE.value
+    questions = InternalHelper.retrieve_customer_questions(service_selected)
+    return render_template('main.html', drivers=None, service=service_selected, questions=questions)
 
 
 if __name__ == '__main__':
