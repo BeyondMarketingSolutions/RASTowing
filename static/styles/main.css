@@ -17,6 +17,10 @@ div.descriptionNote {
   text-align: center;
 }
 
+div#jobDescriptionSection{
+  margin-top: 33%;
+}
+
 .ui-autocomplete {
   position: absolute;
   top: 100%;
