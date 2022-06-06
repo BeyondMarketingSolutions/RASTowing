@@ -82,7 +82,6 @@
                                                             url: '{{ url_for("towing_dashboard") }}',
                                                             success: function (response) {
                                                                 $('#questionnaireSection').html($($.parseHTML(response)).find('#questionnaireSection'))
-                                                                console.log($($.parseHTML(response)).find('#questionnaireSection'))
                                                             }
                                                         })
                                                     });

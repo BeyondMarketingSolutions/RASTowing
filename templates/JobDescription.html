@@ -1,6 +1,6 @@
 {% block content %}
 <div class="col-md-4">
-    <div class="card p-3 py-4 descriptionNote">
+    <div class="card p-3 py-4 descriptionNote" id="jobDescriptionSection">
         <h4 id="jobDescription">
             Job Description
         </h4>
@@ -17,7 +17,7 @@
         <br>
         <span><b>Service</b>: {{ job_data.service }}</span>
         <br>
-        <span><b>Price</b>: £ {{ job_data.driver_price }}</span>
+        <span id="driverPriceTxt"><b>Price</b>: £ {{ job_data.driver_price }}</span>
         <br>
         <span><b>Notes</b>: {{ job_data.description }}</span>
     </div>

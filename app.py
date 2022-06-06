@@ -1,6 +1,7 @@
 import flask
 from flask import Flask, render_template, request, session, flash, Response
 import json
+import math
 from helper.InternalHelper import InternalHelper
 from helper.ExcelHelper import ExcelHelper
 from helper.FileHelper import FileHelper
@@ -22,7 +23,7 @@ helper = InternalHelper()
 
 @app.route('/')
 def towing_dashboard():
-    service = request.args.get('service');
+    service = request.args.get('service')
     if service is not None:
         service_selected = Services[service].value
     else:
@@ -66,6 +67,16 @@ def send_customer_invoice():
     flash(payment_link, "info")
     return render_template('ChargeCustomer.html', drivers=session[SessionDataEnum.DRIVERS], job_data=job_data,
                            payment_link=payment_link)
+
+@app.route('/edit', methods=['POST'])
+def edit_price_manually():
+    total_price = float(request.form['total_price'])
+    session[SessionDataEnum.JOB_DATA]['total_price'] = math.ceil(total_price)
+    session[SessionDataEnum.JOB_DATA]['advanced_payment'] = math.ceil(math.ceil(total_price) * 0.3)
+    session[SessionDataEnum.JOB_DATA]['driver_price'] = \
+        session[SessionDataEnum.JOB_DATA]['total_price'] - session[SessionDataEnum.JOB_DATA]['advanced_payment']
+    job_data = namedtuple("JobData", session[SessionDataEnum.JOB_DATA].keys())(*session[SessionDataEnum.JOB_DATA].values())
+    return render_template('ChargeCustomer.html', drivers=session[SessionDataEnum.DRIVERS], job_data=job_data)
 
 
 @app.route('/', methods=['POST'])

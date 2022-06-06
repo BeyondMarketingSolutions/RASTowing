@@ -16,16 +16,75 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-md-8">
                     <div class="card p-3 py-4">
-                        <h4 id="priceEstimation">
-                            {% if job_data.price_per_mile %}
-                            <span>Estimated Total Price: £ {{ job_data.total_price }} + £ {{job_data.price_per_mile}} / mile | Advanced Payment: £ {{ job_data.advanced_payment }}</span>
-                            {% else %}
-                            <span>Estimated Total Price: £ {{ job_data.total_price }} | Advanced Payment: £ {{ job_data.advanced_payment }}</span>
-                            {% endif %}
-                        </h4>
                         <div class="mt-3">
                             <div>
                                 <div class="card card-body">
+                                    <h4 style="text-align: center"> Price Data: </h4>
+                                    <br>
+                                    <div class="row">
+                                        <h4 id="priceEstimation">
+                                            <span id="advancePaymentTxt">Advanced Payment: £ {{ job_data.advanced_payment }}</span>
+                                            {% if job_data.price_per_mile %}
+                                            <br>
+                                            <span>Additional Costs: £ {{job_data.price_per_mile}} / mile</span>
+                                            <br>
+                                            {% endif %}
+                                            <span id="totalPriceTxt">Estimated Total Price: £ {{job_data.total_price}}</span>
+                                            <label id="totalPriceLabel" hidden>Estimated Total Price: £</label>
+                                            <input id="totalPriceInput" value="{{job_data.total_price}}" hidden>
+                                            <br>
+                                            <br>
+                                            <button type="button" class="btn btn-secondary btn-block"
+                                                    id="changePriceBtn">
+                                                Edit Price
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-block"
+                                                    id="completeEditingPriceBtn"
+                                                    hidden>
+                                                Complete Editing
+                                            </button>
+                                            <script>
+                                                $('#changePriceBtn').on('click', function () {
+                                                    $('#totalPriceInput').attr("hidden", false)
+                                                    $('#totalPriceInput').attr("readonly", false)
+                                                    $('#totalPriceLabel').attr("hidden", false)
+                                                    $('#totalPriceTxt').attr("hidden", true)
+                                                    $('#changePriceBtn').attr("hidden", true)
+                                                    $('#completeEditingPriceBtn').attr("hidden", false)
+                                                });
+                                                $('#completeEditingPriceBtn').on('click', function () {
+                                                    $('#totalPriceInput').attr("readonly", true)
+                                                    $.ajax({
+                                                        type: "POST",
+                                                        data: {'total_price': $('#totalPriceInput').val()},
+                                                        url: '{{ url_for("edit_price_manually") }}',
+                                                        success: function (response) {
+                                                            $('#completeEditingPriceBtn').attr("hidden", true)
+                                                            $('#changePriceBtn').attr("hidden", false)
+                                                            $('#totalPriceInput').attr("hidden", true)
+                                                            $('#totalPriceInput').attr("readonly", true)
+                                                            $('#totalPriceLabel').attr("hidden", true)
+                                                            $('#totalPriceTxt').attr("hidden", false)
+                                                            $('#totalPriceTxt').html($($.parseHTML(response)).find('#totalPriceTxt'))
+                                                            $('#advancePaymentTxt').html($($.parseHTML(response)).find('#advancePaymentTxt'))
+                                                            $('#driverPriceTxt').html($($.parseHTML(response)).find('#driverPriceTxt'))
+                                                        }
+                                                    })
+                                                });
+                                            </script>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card p-3 py-4">
+                        <div class="mt-3">
+                            <div>
+                                <div class="card card-body">
+                                    <h4 style="text-align: center"> Customer Data: </h4>
+                                    <br>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-floating">
@@ -106,6 +165,7 @@
                 <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Collaboration</th>
                     <th>Tel</th>
                     <th>Live ETA</th>
                     <th>Distance</th>
@@ -115,6 +175,11 @@
                 {% for driver in drivers %}
                 <tr>
                     <td>{{ driver['Name'] }}</td>
+                    {% if driver['Converted'] == 'Yes' %}
+                    <td>&nbsp; &nbsp; &nbsp;<i class="fa-solid fa-handshake fa-2x"></i></td>
+                    {% else %}
+                    <td style="font-weight: bold"> &nbsp; &nbsp; &nbsp; &nbsp; - </td>
+                    {% endif %}
                     <td>
                         {% for telNr in driver['Tel'] %}
                         <a class="btn btn-success" href="tel:{{ telNr }}">
