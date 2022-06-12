@@ -46,17 +46,12 @@ class InternalHelper:
         job_data.driver_price = job_data.total_price - job_data.advanced_payment
 
 
-    def retrieve_nearest_drivers(self, drivers_locations, client_location, drivers_basic_data):
-        drivers_final_data = drivers_basic_data
-        drivers_distance_data = []
-        for paginatedLocations in [drivers_locations[i:i + 25] for i in range(0, len(drivers_locations), 25)]:
-            drivers_distance_data.extend(self.googleMapsAPI.calculate_live_distance(paginatedLocations, client_location))
-        [drivers_final_data[index].update(additional_data) for index, additional_data in
-         enumerate(drivers_distance_data)]
-        drivers_final_data = self.__normalize_values(drivers_final_data)
-        drivers_final_data.sort(key=lambda d: d['duration_in_traffic'])
-        self.normalize_tel_values(drivers_final_data)
-        return drivers_final_data
+    def retrieve_nearest_drivers(self, drivers_locations, client_location, drivers_data):
+        self.googleMapsAPI.calculate_live_distance(drivers_locations, client_location, drivers_data)
+        drivers_data = self.__normalize_values(drivers_data)
+        drivers_data.sort(key=lambda d: d['duration_in_traffic'])
+        self.normalize_tel_values(drivers_data)
+        return drivers_data
 
     def send_customer_invoice(self, price, customer, type_of_service):
         return self.paymentHelper.generate_invoice_link(price, customer, type_of_service)
@@ -103,16 +98,14 @@ class InternalHelper:
 
     @staticmethod
     def __normalize_values(driver_data):
-        indexes_to_remove = []
+        data_to_elaborate = driver_data[:]
         for index, data in enumerate(driver_data):
             if 'duration_in_traffic' and 'distance' in data:
                 data['duration_in_traffic'] = str(timedelta(seconds=data['duration_in_traffic']))
                 data['distance'] = str(int(data['distance']) // 1600) + ' miles'
             else:
-                indexes_to_remove.append(index)
-        for index in indexes_to_remove:
-            del driver_data[index]
-        return driver_data
+                data_to_elaborate.remove(data)
+        return data_to_elaborate
 
     @staticmethod
     def normalize_tel_values(drivers_response):

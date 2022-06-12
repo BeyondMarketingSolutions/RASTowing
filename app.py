@@ -47,7 +47,7 @@ def render_results():
     if len(drivers_basic_data) == 0:
         return render_template('main.html', drivers=None)
     else:
-        driversLocations = [data['Address'] for data in drivers_basic_data]
+        driversLocations = [data['Post Code'] for data in drivers_basic_data]
         drivers = helper.retrieve_nearest_drivers(driversLocations, job_data.origin, drivers_basic_data)
         helper.calculate_estimated_price_based_on_service(job_data)
         session[SessionDataEnum.DRIVERS] = drivers
