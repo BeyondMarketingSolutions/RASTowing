@@ -42,7 +42,7 @@ class InternalHelper:
 
         total_price += (self.__additional_prices_to_charge(job_data.weight))
         job_data.total_price = math.ceil(total_price)
-        job_data.advanced_payment = math.ceil(total_price * 0.3)
+        job_data.advanced_payment = math.ceil(total_price * 0.35)
         job_data.driver_price = job_data.total_price - job_data.advanced_payment
 
 
