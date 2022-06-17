@@ -72,7 +72,7 @@ def send_customer_invoice():
 def edit_price_manually():
     total_price = float(request.form['total_price'])
     session[SessionDataEnum.JOB_DATA]['total_price'] = math.ceil(total_price)
-    session[SessionDataEnum.JOB_DATA]['advanced_payment'] = math.ceil(math.ceil(total_price) * 0.3)
+    session[SessionDataEnum.JOB_DATA]['advanced_payment'] = math.ceil(math.ceil(total_price) * 0.35)
     session[SessionDataEnum.JOB_DATA]['driver_price'] = \
         session[SessionDataEnum.JOB_DATA]['total_price'] - session[SessionDataEnum.JOB_DATA]['advanced_payment']
     job_data = namedtuple("JobData", session[SessionDataEnum.JOB_DATA].keys())(*session[SessionDataEnum.JOB_DATA].values())
